@@ -1,0 +1,53 @@
+
+#!!! ENSURE ALL COORDINATES ARE WITHIN THE BOUNDARIES OF THE GRID SIZE!!!
+
+#Enter size of the grid, e.g. 6x6, 5x4, 7x7...
+grid_size: 
+  - 6 #row
+  - 8 #col
+
+#Enter coordinates of the *start* of the wall under *coord1*, (x,y) -> row = x, col = y
+#Then enter coordinates for where wall should *end* under *coord2* 
+#To create another wall
+#copy and paste the wall section and rename wall, e.g. 'wall3'
+obstacle_shape:
+  - wall:
+      coord1:
+        - 4 #row
+        - 1 #col
+
+      coord2:
+        - 4 #row
+        - 4 #col
+
+  - wall2:
+      coord1:
+        - 4 #row
+        - 4 #col
+
+      coord2:
+        - 2 #row
+        - 4 #col
+
+  - wall3:
+      coord1:
+        - 1 #row
+        - 3 #col
+
+      coord2:
+        - 1 #row
+        - 1 #col        
+    
+#Enter coordinates of the start position, (x,y) -> row = x, col = y
+start:
+  - 3 #row
+  - 2 #col
+
+#Enter the coordinates of the goal position, (x,y) -> row = x, col = y
+goal:
+  - 4 #row
+  - 6 #col
+
+#enter heuristic of choice: octile or manhattan
+heuristic:
+  octile
