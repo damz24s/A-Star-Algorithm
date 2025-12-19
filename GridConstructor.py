@@ -1,12 +1,13 @@
 import LoadData as ld
 import math
+from enum import Enum
 
-ld.obstacles
-ld.goal_coord
-ld.grid_size
-ld.start_coord
-ld.heuristic
-#import all the loaded data
+class GridItems(Enum):
+  START = 's'
+  Goal = 'g'
+  OBSTACLE = '#'
+  WALKABLE = '0'
+
 
 def loadGrid(gridSpec):
   grid = []

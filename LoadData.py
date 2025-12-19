@@ -1,4 +1,6 @@
 import yaml
+import Heuristic as h
+
 #read the config file
 with open("config.yaml", "r") as file:
   data = yaml.safe_load(file)
@@ -13,6 +15,12 @@ goal_coord = data["goal"]
 
 #load heuristics of choice
 heuristic = data["heuristic"]
+
+if heuristic == 'octile':
+  heuristic = h.octile
+
+elif heuristic == 'manhattan':
+  heuristic = h.manhattan
 
 obstacles = []
 f = data["obstacle_shape"]

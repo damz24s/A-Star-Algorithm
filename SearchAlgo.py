@@ -7,8 +7,8 @@ Created on Wed Nov 12 21:29:11 2025
 
 import heapq
 from Node import Node
-from Heuristic import Heuristic
-from Grids import Grid
+import LoadData as ld
+import GridConstructor as gc
 
 
 class Astar:
@@ -17,7 +17,7 @@ class Astar:
         self. start_node = start_node
         self.goal_node = goal_node
 
-
+        
 
     def isGoal(self, node):
         
@@ -43,49 +43,47 @@ class Astar:
             coordPath.append(node.coord)
         coordPath.reverse()
         print("path:", coordPath)
-    
+        
 
-        
-        
-        
-    def neighbourGenerator(self, node, matrix, closed_list):
-        directions = {"down" : [(1,0), 1],
-                      "bottomright" : [(1,1), 1.4],
-                      "right" : [(0,1), 1],
-                      "topright" : [(-1,1), 1.4],
-                      "up" : [(-1,0), 1],
-                      "topleft" : [(-1,-1), 1.4],
-                      "left" :[(0,-1), 1],
-                      "bottomleft" : [(1,-1), 1.4],
-                      }
-        check = False
-        for key in directions.keys():
-            new_node = Node((node.coord[0] + directions[key][0][0], node.coord[1] + directions[key][0][1]))
-            g_val = directions[key][1]
-            try:
-                if matrix[new_node.coord[0]][new_node.coord[1]] != None:
-                    if matrix[new_node.coord[0]][new_node.coord[1]] == "#":
-                        continue
-                    
-                    elif new_node in closed_list:
-                        continue
-                    
-                yield (new_node, g_val)
-                check = True    
+
+    def isValid(self, curr_node, grid):
+        try:
+            for items in gc.GridItems:
+                i = grid[curr_node[0]][curr_node[1]]
+                if i == gc.GridItems.OBSTACLE.value:
+                    return False
+                return True
+            
+        except:
+            print(f'This cell, {curr_node} is out of bounds')
+
+
+    def neighbourGenerator(self, curr_node, grid, heuristic):
+        all_neighbours = []
+        directions = [(-1, 0), (0, -1), (1, 0), (0, 1), (-1, 1), (-1, -1), (1, -1), (1, 1)]   
+
+        if heuristic == 'manhattan':
+            for coord in directions[0:4]:
+                neigbour = (curr_node[0] + coord[0], curr_node[1] + coord[1])
+                if self.isValid(neigbour, grid):
+                    yield neigbour
                 
-            except Exception:
                 continue
-            
-        if check == False:
-            yield None
-            
-            
+        
+        elif heuristic == 'octile':
+            for coord in directions:
+                neigbour = (curr_node[0] + coord[0], curr_node[1] + coord[1])
+                if self.isValid(neigbour, grid):
+                    yield neigbour
+                
+                continue
+
+
+
 
     def pathFinder(self):
         start = Node(self.start_node)
         goal = Node(self.goal_node)
-        grid = Grid()
-        matrix = grid.matrices(1)
         open_list = []
         heapq.heapify(open_list)
         closed_list = set()
