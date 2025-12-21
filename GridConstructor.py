@@ -9,12 +9,12 @@ class GridItems(Enum):
   WALKABLE = '0'
 
 
-def loadGrid(gridSpec):
+def loadGrid():
   grid = []
   #create a row for the number of rows specifed in the config file
-  for rows in range(gridSpec[0]):
+  for rows in range(ld.grid_size[0]):
     row=[]
-    for cols in range(gridSpec[1]):
+    for cols in range(ld.grid_size[1]):
       row.append('0')
     grid.append(row)
     #for each row created, fill it with '0's equal to the number of coloumns specified
@@ -26,15 +26,14 @@ def loadGrid(gridSpec):
   grid[goal[0]][goal[1]] = 'g'
   #initialise the start and goal cells within the grid
 
-  loadObstacles(grid)
-  return grid
+  return loadObstacles(grid)
+  
   
 
 
 
 def loadObstacles(grid):
   obstacle = ld.obstacles
-  
   
   while len(obstacle) != 0:
     obs = obstacle[0]
@@ -83,10 +82,7 @@ def loadObstacles(grid):
   return grid  
 
  
-def printGrid():
-  grid = loadGrid(ld.grid_size)
+def printGrid(grid):
   for row in grid:
     print(row)
 
-
-printGrid()

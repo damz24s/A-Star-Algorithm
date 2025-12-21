@@ -13,15 +13,12 @@ import GridConstructor as gc
 
 class Astar:
     
-    def __init__(self, start_node, goal_node):
-        self. start_node = start_node
-        self.goal_node = goal_node
 
         
 
     def isGoal(self, node):
         
-        if node.h_val == 0:
+        if node.coord == ld.goal:
             print("Goal found!!!")
             return True
         else:
@@ -29,7 +26,7 @@ class Astar:
 
 
 
-    def pathReconstruct(self, node): 
+    def pathReconstruct(self, node, grid): 
         path = []
         coordPath = []
         current = node
@@ -44,37 +41,63 @@ class Astar:
         coordPath.reverse()
         print("path:", coordPath)
         
+        gc.printGrid(grid)
+
+
+    def gCostCalculator(self, curr_node):
+        directions = [(-1, 0), (0, -1), (1, 0), (0, 1), (-1, 1), (-1, -1), (1, -1), (1, 1)]   
+        parent = curr_node.parent
+        dx = (curr_node.coord[0] - parent.coord[0])
+        dy = (curr_node.coord[1] - parent.coord[1])
+
+        if (dx, dy) in directions[0:4]:
+            curr_node.g_val = parent.g_val + 10
+            return curr_node.g_val
+        
+        else:
+            curr_node.g_val = parent.g_val + 14
+            return curr_node.g_val
+
+
+
+    def nodeCreator(self, new_node_coord):
+        new_node = Node((new_node_coord))
+        return new_node
+
 
 
     def isValid(self, curr_node, grid):
-        try:
-            for items in gc.GridItems:
-                i = grid[curr_node[0]][curr_node[1]]
-                if i == gc.GridItems.OBSTACLE.value:
-                    return False
-                return True
+        if curr_node[0] < 0 or curr_node[0] > (len(grid) - 1) or curr_node[1] < 0 or curr_node[1] > (len(grid[0]) - 1):
+            return False
+        
+        i = grid[curr_node[0]][curr_node[1]]
+        for items in gc.GridItems:
+            if i == gc.GridItems.OBSTACLE.value:
+                return False
+            return True
             
-        except:
-            print(f'This cell, {curr_node} is out of bounds')
+       
 
 
-    def neighbourGenerator(self, curr_node, grid, heuristic):
-        all_neighbours = []
+
+    def neighbourGenerator(self, curr_node, grid, heu_name):
         directions = [(-1, 0), (0, -1), (1, 0), (0, 1), (-1, 1), (-1, -1), (1, -1), (1, 1)]   
 
-        if heuristic == 'manhattan':
-            for coord in directions[0:4]:
-                neigbour = (curr_node[0] + coord[0], curr_node[1] + coord[1])
-                if self.isValid(neigbour, grid):
-                    yield neigbour
+        if heu_name == 'manhattan':
+            for dir in directions[0:4]:
+                neighbour = (curr_node.coord[0] + dir[0], curr_node.coord[1] + dir[1])
+                if self.isValid(neighbour, grid):
+                    new_neighbour = self.nodeCreator(neighbour)
+                    yield new_neighbour
                 
                 continue
         
-        elif heuristic == 'octile':
-            for coord in directions:
-                neigbour = (curr_node[0] + coord[0], curr_node[1] + coord[1])
-                if self.isValid(neigbour, grid):
-                    yield neigbour
+        elif heu_name == 'octile':
+            for dir in directions:
+                neighbour = (curr_node.coord[0] + dir[0], curr_node.coord[1] + dir[1])
+                if self.isValid(neighbour, grid):
+                    new_neighbour = self.nodeCreator(neighbour)
+                    yield new_neighbour
                 
                 continue
 
@@ -82,73 +105,70 @@ class Astar:
 
 
     def pathFinder(self):
-        start = Node(self.start_node)
-        goal = Node(self.goal_node)
-        open_list = []
+        start = Node(ld.start)
+        goal = Node(ld.goal)
+        open_list = [] #Open List for Priority tracking
+        open_dict = {} #Open dictionary for membership trcking
         heapq.heapify(open_list)
-        closed_list = set()
-        heu = Heuristic()
-        open_dict = {}
+        closed_list = []
+        heu = ld.heuristic
+        heu_name = ld.heu_name
+        grid = gc.loadGrid()
         
         curr_node = start
-        curr_node.h_val = (heu.octile(curr_node.coord[0], curr_node.coord[1], goal.coord[0], goal.coord[1]))
-        curr_node.f_val = curr_node.g_val + curr_node.h_val
-        heapq.heappush(open_list, curr_node)
-        open_dict[curr_node.coord] = [curr_node.f_val]
+        heapq.heappush(open_list,(curr_node.f_val, curr_node))
+        open_dict[curr_node.coord] = curr_node.f_val
         
         while True:
-                
-            if len(open_list) == 0:
+            if len(open_dict) == 0:
                 print("Goal not found!")
                 break
             
             
             else:
-                curr_node = heapq.heappop(open_list)
+                tuple = heapq.heappop(open_list)
+                curr_node = tuple[1]
+                popped = open_dict.pop(curr_node.coord)
                 prev_node = curr_node
-                closed_list.add(curr_node)
-                generator = self.neighbourGenerator(curr_node, matrix, closed_list)
+                closed_list.append(curr_node.coord)
+
+                if self.isGoal(curr_node):
+                    self.pathReconstruct(curr_node, grid)
+                    return
+
+                generator = self.neighbourGenerator(curr_node, grid, heu_name)
                 
                 for node in generator:
-                    if node == None:
-                        print("Goal Not Found!")
-                        break
-        
+                    if node.coord in open_dict.keys() or node.coord in closed_list:
+                        old_parent = node.parent
+                        node.parent = prev_node
+                        old_g = node.g_val
+                        curr_g = self.gCostCalculator(node)
+                        if curr_g < old_g:
+                            node.g_val = curr_g
+                            node.f_val = node.g_val + node.h_val
+                            heapq.heappush(open_list, (node.f_val, node))
+                            open_dict.pop(node.coord)
+                            open_dict[node.coord] = node.f_val
+                            continue 
+
+                        node.parent = old_parent
+                        continue
                     
-                    else: 
-                        if node[0].coord in open_dict.keys():
-                            curr_g = prev_node.g_val + node[1]
-                            if curr_g < node[0].g_val:
-                                node[0].g_val = curr_g
-                                node[0].f_val = node[0].g_val + node[0].h_val
-                                node[0].parent = prev_node
-                                heapq.heappush(open_list, node[0])
-                                open_dict[node[0]] = [node[0].f_val]
+                    else:
+                        node.parent = prev_node
                         
-                        else:
-                            node[0].parent = prev_node
-                            
-                            node[0].g_val = prev_node.g_val + node[1]
-                            node[0].h_val = heu.octile(node[0].coord[0] , node[0].coord[1], goal.coord[0], goal.coord[1])
-                            node[0].f_val = node[0].g_val + node[0].h_val
-                            if self.isGoal(node[0]):
-                                self.pathReconstruct(node[0])
-                                break
-                            heapq.heappush(open_list, node[0])
-                            open_dict[node[0].coord] = [node[0].f_val]
+                        node.g_val = self.gCostCalculator(node)
+                        node.h_val = heu(node.coord[0] , node.coord[1], goal.coord[0], goal.coord[1])
+                        node.f_val = node.g_val + node.h_val
+                        if self.isGoal(node):
+                            self.pathReconstruct(node, grid)
+                            return
+
+                        heapq.heappush(open_list, (node.f_val, node))
+                        open_dict[node.coord] = node.f_val
 
 
 
-a1 = Astar((3,2), (4,6))
-
+a1 = Astar()
 a1.pathFinder()
-
-
-
-
-
-
-
-
-
-

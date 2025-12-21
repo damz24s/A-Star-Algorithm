@@ -7,20 +7,24 @@ with open("config.yaml", "r") as file:
 
 #load grid size - format: [r, c]  
 grid_size = data["grid_size"]
-g = grid_size
 
 #load start and goal coordinates - format: [x, y]
 start_coord = data["start"]
+start = (start_coord[0], start_coord[1])
 goal_coord = data["goal"]
+goal = (goal_coord[0], goal_coord[1])
 
 #load heuristics of choice
 heuristic = data["heuristic"]
 
 if heuristic == 'octile':
   heuristic = h.octile
+  heu_name = 'octile'
 
 elif heuristic == 'manhattan':
   heuristic = h.manhattan
+  heu_name = 'manhattan'
+
 
 obstacles = []
 f = data["obstacle_shape"]
