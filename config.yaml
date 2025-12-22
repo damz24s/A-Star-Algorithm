@@ -6,6 +6,13 @@ grid_size:
   - 6 #row
   - 8 #col
 
+#Enter the horizontal + vertical movement cost FIRST 
+#diagonal movement cost afterwards
+movement_costs:
+  - 10 #Horizontal + vertical cost
+  - 14 #Diagonal movement cost
+
+
 #Enter coordinates of the *start* of the wall under *coord1*, (x,y) -> row = x, col = y
 #Then enter coordinates for where wall should *end* under *coord2* 
 #To create another wall
@@ -14,7 +21,7 @@ obstacle_shape:
   - wall:
       coord1:
         - 4 #row
-        - 1 #col
+        - 0 #col
 
       coord2:
         - 4 #row
@@ -45,9 +52,11 @@ start:
 
 #Enter the coordinates of the goal position, (x,y) -> row = x, col = y
 goal:
-  - 4 #row
-  - 6 #col
+  - 5 #row
+  - 0 #col
 
 #enter heuristic of choice: octile or manhattan
 heuristic:
   octile
+
+  
