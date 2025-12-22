@@ -13,9 +13,6 @@ import GridConstructor as gc
 
 class Astar:
     
-
-        
-
     def isGoal(self, node):
         
         if node.coord == ld.goal:
@@ -44,19 +41,19 @@ class Astar:
         gc.printGrid(grid)
 
 
-    def gCostCalculator(self, curr_node):
+    def gCostCalculator(self, curr_node, movement_cost):
         directions = [(-1, 0), (0, -1), (1, 0), (0, 1), (-1, 1), (-1, -1), (1, -1), (1, 1)]   
         parent = curr_node.parent
         dx = (curr_node.coord[0] - parent.coord[0])
         dy = (curr_node.coord[1] - parent.coord[1])
 
         if (dx, dy) in directions[0:4]:
-            curr_node.g_val = parent.g_val + 10
-            return curr_node.g_val
+            g_val = movement_cost[0]
+            return g_val
         
         else:
-            curr_node.g_val = parent.g_val + 14
-            return curr_node.g_val
+            g_val = movement_cost[1]
+            return g_val
 
 
 
@@ -114,10 +111,11 @@ class Astar:
         heu = ld.heuristic
         heu_name = ld.heu_name
         grid = gc.loadGrid()
+        movement = ld.movement_costs
         
         curr_node = start
         heapq.heappush(open_list,(curr_node.f_val, curr_node))
-        open_dict[curr_node.coord] = curr_node.f_val
+        open_dict[curr_node] = curr_node.f_val
         
         while True:
             if len(open_dict) == 0:
@@ -128,9 +126,9 @@ class Astar:
             else:
                 tuple = heapq.heappop(open_list)
                 curr_node = tuple[1]
-                popped = open_dict.pop(curr_node.coord)
+                open_dict.pop(curr_node)
                 prev_node = curr_node
-                closed_list.append(curr_node.coord)
+                closed_list.append(curr_node)
 
                 if self.isGoal(curr_node):
                     self.pathReconstruct(curr_node, grid)
@@ -138,35 +136,40 @@ class Astar:
 
                 generator = self.neighbourGenerator(curr_node, grid, heu_name)
                 
-                for node in generator:
-                    if node.coord in open_dict.keys() or node.coord in closed_list:
-                        old_parent = node.parent
-                        node.parent = prev_node
-                        old_g = node.g_val
-                        curr_g = self.gCostCalculator(node)
-                        if curr_g < old_g:
-                            node.g_val = curr_g
-                            node.f_val = node.g_val + node.h_val
-                            heapq.heappush(open_list, (node.f_val, node))
-                            open_dict.pop(node.coord)
-                            open_dict[node.coord] = node.f_val
-                            continue 
-
-                        node.parent = old_parent
-                        continue
-                    
-                    else:
-                        node.parent = prev_node
+                for neighbour in generator:
+                    if neighbour not in open_dict.keys():
+                        if neighbour in closed_list:
+                            continue
+                        neighbour.parent = prev_node
                         
-                        node.g_val = self.gCostCalculator(node)
-                        node.h_val = heu(node.coord[0] , node.coord[1], goal.coord[0], goal.coord[1])
-                        node.f_val = node.g_val + node.h_val
-                        if self.isGoal(node):
-                            self.pathReconstruct(node, grid)
+                        neighbour.g_val = self.gCostCalculator(neighbour, movement)
+                        neighbour.h_val = heu(neighbour.coord[0] , neighbour.coord[1], goal.coord[0], goal.coord[1])
+                        neighbour.f_val = neighbour.g_val + neighbour.h_val
+                        if self.isGoal(neighbour):
+                            self.pathReconstruct(neighbour, grid)
                             return
 
-                        heapq.heappush(open_list, (node.f_val, node))
-                        open_dict[node.coord] = node.f_val
+                        heapq.heappush(open_list, (neighbour.f_val, neighbour))
+                        open_dict[neighbour] = neighbour.f_val
+                        
+                    
+                    else:
+                        old_parent = neighbour.parent
+                        neighbour.parent = prev_node
+                        old_g = neighbour.g_val
+                        curr_g = self.gCostCalculator(neighbour, movement)
+
+                        if curr_g < old_g:
+                            neighbour.g_val = curr_g
+                            neighbour.f_val = neighbour.g_val + neighbour.h_val
+                            heapq.heappush(open_list, (neighbour.f_val, neighbour))
+                            open_dict.update({neighbour: neighbour.f_val})
+                            
+                        neighbour.parent = old_parent
+                        continue
+
+
+
 
 
 

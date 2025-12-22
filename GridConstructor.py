@@ -27,8 +27,6 @@ def loadGrid():
   #initialise the start and goal cells within the grid
 
   return loadObstacles(grid)
-  
-  
 
 
 
