@@ -20,7 +20,7 @@ This project allows users to configure the grid, heuristic, and movement costs v
 
 ## Project Structure
 
-.
+
 ── SearchAlgo.py
 ── Node.py
 ── GridConstructor.py
