@@ -13,9 +13,9 @@ import GridConstructor as gc
 
 class Astar:
     
-    def isGoal(self, node):
+    def isGoal(self, node_coord, goal_coord):
         
-        if node.coord == ld.goal:
+        if node_coord == goal_coord:
             print("Goal found!!!")
             return True
         else:
@@ -23,29 +23,27 @@ class Astar:
 
 
 
-    def pathReconstruct(self, node, grid): 
-        path = []
+    def pathReconstruct(self, start, goal, overall, grid): 
         coordPath = []
-        current = node
-        path.append(current)
-        
-        while current.parent != None:
-            current = current.parent
-            path.append(current)
-        
-        for node in path:
-            coordPath.append(node.coord)
+        coordPath.append(goal)
+        current = goal
+
+        while current != start:
+            list = overall.get(current)
+            coordPath.append(list[1])
+            current = list[1]
+
         coordPath.reverse()
         print("path:", coordPath)
-        
-        gc.printGrid(grid)
+        gc.printGrid(grid)        
 
 
-    def gCostCalculator(self, curr_node, movement_cost):
+
+    def gCostCalculator(self, curr_node, parent_coord, movement_cost):
         directions = [(-1, 0), (0, -1), (1, 0), (0, 1), (-1, 1), (-1, -1), (1, -1), (1, 1)]   
-        parent = curr_node.parent
-        dx = (curr_node.coord[0] - parent.coord[0])
-        dy = (curr_node.coord[1] - parent.coord[1])
+
+        dx = (curr_node.coord[0] - parent_coord[0])
+        dy = (curr_node.coord[1] - parent_coord[1])
 
         if (dx, dy) in directions[0:4]:
             g_val = movement_cost[0]
@@ -68,21 +66,20 @@ class Astar:
             return False
         
         i = grid[curr_node[0]][curr_node[1]]
-        for items in gc.GridItems:
-            if i == gc.GridItems.OBSTACLE.value:
-                return False
-            return True
+        if i == gc.GridItems.OBSTACLE.value:
+            return False
+        return True
             
        
 
 
 
-    def neighbourGenerator(self, curr_node, grid, heu_name):
+    def neighbourGenerator(self, curr_node_coord, grid, heu_name):
         directions = [(-1, 0), (0, -1), (1, 0), (0, 1), (-1, 1), (-1, -1), (1, -1), (1, 1)]   
 
         if heu_name == 'manhattan':
             for dir in directions[0:4]:
-                neighbour = (curr_node.coord[0] + dir[0], curr_node.coord[1] + dir[1])
+                neighbour = (curr_node_coord[0] + dir[0], curr_node_coord[1] + dir[1])
                 if self.isValid(neighbour, grid):
                     new_neighbour = self.nodeCreator(neighbour)
                     yield new_neighbour
@@ -91,7 +88,7 @@ class Astar:
         
         elif heu_name == 'octile':
             for dir in directions:
-                neighbour = (curr_node.coord[0] + dir[0], curr_node.coord[1] + dir[1])
+                neighbour = (curr_node_coord[0] + dir[0], curr_node_coord[1] + dir[1])
                 if self.isValid(neighbour, grid):
                     new_neighbour = self.nodeCreator(neighbour)
                     yield new_neighbour
@@ -105,7 +102,7 @@ class Astar:
         start = Node(ld.start)
         goal = Node(ld.goal)
         open_list = [] #Open List for Priority tracking
-        open_dict = {} #Open dictionary for membership trcking
+        overall_dict = {} #Overall dictionary for membership tracking
         heapq.heapify(open_list)
         closed_list = []
         heu = ld.heuristic
@@ -114,59 +111,57 @@ class Astar:
         movement = ld.movement_costs
         
         curr_node = start
-        heapq.heappush(open_list,(curr_node.f_val, curr_node))
-        open_dict[curr_node] = curr_node.f_val
+        heapq.heappush(open_list,(curr_node.f_val, curr_node.g_val, curr_node.coord))
+        parent = curr_node.parent
+        overall_dict[curr_node.coord] = [curr_node.g_val, None]
         
         while True:
-            if len(open_dict) == 0:
+            if len(open_list) == 0:
                 print("Goal not found!")
                 break
             
             
             else:
                 tuple = heapq.heappop(open_list)
-                curr_node = tuple[1]
-                open_dict.pop(curr_node)
-                prev_node = curr_node
-                closed_list.append(curr_node)
+                curr_node_coord = tuple[2]
+                curr_g = tuple [1]
+                best_known = overall_dict.get(curr_node_coord)
+                if curr_g > best_known[0]:
+                    continue
 
-                if self.isGoal(curr_node):
-                    self.pathReconstruct(curr_node, grid)
-                    return
-
-                generator = self.neighbourGenerator(curr_node, grid, heu_name)
-                
-                for neighbour in generator:
-                    if neighbour not in open_dict.keys():
-                        if neighbour in closed_list:
-                            continue
-                        neighbour.parent = prev_node
-                        
-                        neighbour.g_val = self.gCostCalculator(neighbour, movement)
-                        neighbour.h_val = heu(neighbour.coord[0] , neighbour.coord[1], goal.coord[0], goal.coord[1])
-                        neighbour.f_val = neighbour.g_val + neighbour.h_val
-                        if self.isGoal(neighbour):
-                            self.pathReconstruct(neighbour, grid)
-                            return
-
-                        heapq.heappush(open_list, (neighbour.f_val, neighbour))
-                        open_dict[neighbour] = neighbour.f_val
-                        
+                elif curr_g == best_known[0]:
+                    closed_list.append(curr_node_coord)
                     
-                    else:
-                        old_parent = neighbour.parent
-                        neighbour.parent = prev_node
-                        old_g = neighbour.g_val
-                        curr_g = self.gCostCalculator(neighbour, movement)
+                    generator = self.neighbourGenerator(curr_node_coord, grid, heu_name)
+                    
+                    for neighbour in generator:
+                        parent = curr_node_coord
+                        curr_g_val = self.gCostCalculator(neighbour, parent, movement) + overall_dict[parent][0]
+                        
+                        if neighbour.coord in overall_dict.keys():
+                            best_known = overall_dict.get(neighbour.coord)
+                            if curr_g_val >= best_known[0]:
+                                continue
 
-                        if curr_g < old_g:
-                            neighbour.g_val = curr_g
+                            elif curr_g_val < best_known[0]:
+                                overall_dict[neighbour.coord] = [curr_g_val, parent]
+                                neighbour.f_val = curr_g_val + neighbour.h_val
+                                heapq.heappush(open_list, (neighbour.f_val, curr_g_val, neighbour.coord))
+                                continue
+
+                        else:
+                            neighbour.g_val = curr_g_val
+                            neighbour.h_val = heu(neighbour.coord[0], neighbour.coord[1], goal.coord[0], goal.coord[1])
                             neighbour.f_val = neighbour.g_val + neighbour.h_val
-                            heapq.heappush(open_list, (neighbour.f_val, neighbour))
-                            open_dict.update({neighbour: neighbour.f_val})
+   
+                            overall_dict[neighbour.coord] = [neighbour.g_val, parent]
+                            heapq.heappush(open_list, (neighbour.f_val, neighbour.g_val, neighbour.coord))
+                            if self.isGoal(neighbour.coord, goal.coord):
+                                self.pathReconstruct(start.coord, neighbour.coord, overall_dict, grid)
+                                return
                             
-                        neighbour.parent = old_parent
-                        continue
+                            continue
+
 
 
 

@@ -4,7 +4,7 @@ Created on Fri Nov 14 20:22:10 2025
 
 @author: samue
 """
-
+ 
 import math as m
 import utils as util
 

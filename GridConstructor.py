@@ -40,7 +40,7 @@ def loadObstacles(grid):
     obstacle.pop(0)
     #assign the first two obstacle coords in the list and pop them from the list
     #first two coords represent the start and end of the 'wall' obstacl
-
+ 
     if grid[obs[0]][obs[1]] != '#':
       grid[obs[0]][obs[1]] = '#'
       #if the current cell isn't an obstacle, make it one

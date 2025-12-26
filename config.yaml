@@ -1,5 +1,6 @@
 
 #!!! ENSURE ALL COORDINATES ARE WITHIN THE BOUNDARIES OF THE GRID SIZE!!!
+#!!! '0' marks the beginning of a row/column !!! 
 
 #Enter size of the grid, e.g. 6x6, 5x4, 7x7...
 grid_size: 
@@ -9,7 +10,7 @@ grid_size:
 #Enter the horizontal + vertical movement cost FIRST 
 #diagonal movement cost afterwards
 movement_costs:
-  - 10 #Horizontal + vertical cost
+  - 10 #Horizontal / vertical cost
   - 14 #Diagonal movement cost
 
 
@@ -17,6 +18,7 @@ movement_costs:
 #Then enter coordinates for where wall should *end* under *coord2* 
 #To create another wall
 #copy and paste the wall section and rename wall, e.g. 'wall3'
+#To remove a wall, delete the entire wall section
 obstacle_shape:
   - wall:
       coord1:

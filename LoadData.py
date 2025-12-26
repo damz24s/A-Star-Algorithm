@@ -8,7 +8,7 @@ with open("config.yaml", "r") as file:
 #load grid size - format: [r, c]  
 grid_size = data["grid_size"]
 
-
+ 
 #load movement costs - format: [m, m1]/[m]  
 movement_costs = data['movement_costs']
 

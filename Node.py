@@ -12,7 +12,8 @@ class Node:
         self.f_val = f_val
         self.g_val = g_val
         self.h_val = h_val
-        self.parent = parent
+        self.parent = parent 
+
         
         
     
