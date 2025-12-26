@@ -21,15 +21,15 @@ This project allows users to configure the grid, heuristic, and movement costs v
 ## Project Structure
 
 .
-├── SearchAlgo.py
-├── Node.py
-├── GridConstructor.py
-├── Heuristic.py
-├── LoadData.py
-├── utils.py
-├── config.yaml
-├── requirements.txt
-└── README.md
+── SearchAlgo.py
+── Node.py
+── GridConstructor.py
+── Heuristic.py
+── LoadData.py
+── utils.py
+── config.yaml
+── requirements.txt
+── README.md
 
 ---
 
