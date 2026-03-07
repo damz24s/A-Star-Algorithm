@@ -39,7 +39,7 @@ def loadObstacles(grid):
     obstacle.pop(0)
     obstacle.pop(0)
     #assign the first two obstacle coords in the list and pop them from the list
-    #first two coords represent the start and end of the 'wall' obstacl
+    #first two coords represent the start and end of the 'wall' obstacle
  
     if grid[obs[0]][obs[1]] != '#':
       grid[obs[0]][obs[1]] = '#'
@@ -81,6 +81,8 @@ def loadObstacles(grid):
 
  
 def printGrid(grid):
+  g = []
   for row in grid:
     print(row)
+
 

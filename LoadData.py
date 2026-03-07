@@ -41,8 +41,8 @@ for item in f:
     for val in v.values():
       obstacles.append(val)
 #for each item in the obstacles list, (dict)
-#for each key(k) and value(v) pair, key == key, value == {key:[val]}
-#search through the values of values, {key:[val]}, and append them to the list
+#for each key(k) and value(v) pair, key == wall, value == {coord1:[row, col], coord2:[row, col]}
+#search through the values of values, {[row, col]}, and append them to the list
 
 
     

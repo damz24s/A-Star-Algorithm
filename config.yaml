@@ -1,11 +1,11 @@
 
 #!!! ENSURE ALL COORDINATES ARE WITHIN THE BOUNDARIES OF THE GRID SIZE!!!
-#!!! '0' marks the beginning of a row/column !!! 
+#!!! '0' marks the beginning of a row/column when placing walls and start/goal nodes !!!
 
 #Enter size of the grid, e.g. 6x6, 5x4, 7x7...
 grid_size: 
-  - 6 #row
-  - 8 #col
+  - 10 #row
+  - 10 #col
 
 #Enter the horizontal + vertical movement cost FIRST 
 #diagonal movement cost afterwards
@@ -27,38 +27,58 @@ obstacle_shape:
 
       coord2:
         - 4 #row
-        - 4 #col
-
+        - 1 #col
+      
   - wall2:
       coord1:
         - 4 #row
-        - 4 #col
+        - 7 #col
 
       coord2:
-        - 2 #row
-        - 4 #col
+        - 4 #row
+        - 9 #col
 
   - wall3:
       coord1:
-        - 1 #row
+        - 2 #row
+        - 6 #col
+
+      coord2:
+        - 6 #row
+        - 6 #col
+        
+  - wall4:
+      coord1:
+        - 4 #row
         - 3 #col
 
       coord2:
-        - 1 #row
-        - 1 #col        
+        - 4 #row
+        - 4 #col
     
+    
+  - wall5:
+      coord1:
+        - 1 #row
+        - 2 #col
+
+      coord2:
+        - 3 #row
+        - 2 #col
+        
+        
 #Enter coordinates of the start position, (x,y) -> row = x, col = y
 start:
-  - 3 #row
-  - 2 #col
+  - 6 #row
+  - 1 #col
 
 #Enter the coordinates of the goal position, (x,y) -> row = x, col = y
 goal:
-  - 5 #row
-  - 0 #col
+  - 2 #row
+  - 7 #col
 
 #enter heuristic of choice: octile or manhattan
 heuristic:
-  octile
+  'octile'
 
   

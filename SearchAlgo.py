@@ -7,8 +7,7 @@ Created on Wed Nov 12 21:29:11 2025
 
 import heapq
 from Node import Node
-import LoadData as ld
-import GridConstructor as gc
+
 
 
 class Astar:
@@ -16,7 +15,6 @@ class Astar:
     def isGoal(self, node_coord, goal_coord):
         
         if node_coord == goal_coord:
-            print("Goal found!!!")
             return True
         else:
             return False
@@ -34,8 +32,7 @@ class Astar:
             current = list[1]
 
         coordPath.reverse()
-        print("path:", coordPath)
-        gc.printGrid(grid)        
+        return coordPath
 
 
 
@@ -66,7 +63,7 @@ class Astar:
             return False
         
         i = grid[curr_node[0]][curr_node[1]]
-        if i == gc.GridItems.OBSTACLE.value:
+        if i == '#':
             return False
         return True
             
@@ -98,17 +95,12 @@ class Astar:
 
 
 
-    def pathFinder(self):
-        start = Node(ld.start)
-        goal = Node(ld.goal)
+    def pathFinder(self, start, goal, grid, movement, heu, heu_name):
         open_list = [] #Open List for Priority tracking
         overall_dict = {} #Overall dictionary for membership tracking
         heapq.heapify(open_list)
         closed_list = []
-        heu = ld.heuristic
-        heu_name = ld.heu_name
-        grid = gc.loadGrid()
-        movement = ld.movement_costs
+ 
         
         curr_node = start
         heapq.heappush(open_list,(curr_node.f_val, curr_node.g_val, curr_node.coord))
@@ -117,8 +109,8 @@ class Astar:
         
         while True:
             if len(open_list) == 0:
-                print("Goal not found!")
-                break
+                return None
+                
             
             
             else:
@@ -157,16 +149,8 @@ class Astar:
                             overall_dict[neighbour.coord] = [neighbour.g_val, parent]
                             heapq.heappush(open_list, (neighbour.f_val, neighbour.g_val, neighbour.coord))
                             if self.isGoal(neighbour.coord, goal.coord):
-                                self.pathReconstruct(start.coord, neighbour.coord, overall_dict, grid)
-                                return
+                                return self.pathReconstruct(start.coord, neighbour.coord, overall_dict, grid)
                             
                             continue
 
 
-
-
-
-
-
-a1 = Astar()
-a1.pathFinder()
