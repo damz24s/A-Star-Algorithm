@@ -2,6 +2,8 @@ from Node import Node
 import LoadData as ld
 import GridConstructor as gc
 from SearchAlgo import Astar as A
+import Display as D
+import Visualiser as v
 
 def main():
   start = Node(ld.start)
@@ -11,25 +13,25 @@ def main():
   grid = gc.loadGrid()
   movement = ld.movement_costs
   a_star = A()
+  obstacles = ld.obstacles
 
-
+  path = a_star.pathFinder(start, goal, grid, movement, heu, heu_name)
   while True:
     try:
       print("\n------Main Menu------")
       print("------Select choices between 1 - 3 ------\n")
-      print("1) Path Finder")
-      print("2) Print Grid")
+      print("1) Find Shortest Path")
+      print("2) Display Grid")
       print("3) Exit")
 
       choice = int(input("Enter choice here: "))
 
       if choice == 1:
-        path = a_star.pathFinder(start, goal, grid, movement, heu, heu_name)
-        print(path)
+        v.visuals(obstacles, path[0], path[1])
         continue
 
       elif choice == 2:
-        g = gc.printGrid(grid)
+        D.display(obstacles)
         continue
       
       elif choice == 3:

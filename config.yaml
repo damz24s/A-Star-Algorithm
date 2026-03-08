@@ -4,8 +4,11 @@
 
 #Enter size of the grid, e.g. 6x6, 5x4, 7x7...
 grid_size: 
-  - 10 #row
-  - 10 #col
+  - 15 #row
+  - 15 #col
+
+cell_size:
+  - 50
 
 #Enter the horizontal + vertical movement cost FIRST 
 #diagonal movement cost afterwards
@@ -59,13 +62,30 @@ obstacle_shape:
     
   - wall5:
       coord1:
-        - 1 #row
-        - 2 #col
+        - 6 #row
+        - 5 #col
 
       coord2:
-        - 3 #row
-        - 2 #col
-        
+        - 6 #row
+        - 5 #col
+
+  - wall6:
+      coord1:
+        - 5 #row
+        - 11 #col
+
+      coord2:
+        - 10 #row
+        - 11 #col
+
+  - wall7:
+      coord1:
+        - 9 #row
+        - 9 #col
+
+      coord2:
+        - 9 #row
+        - 4 #col
         
 #Enter coordinates of the start position, (x,y) -> row = x, col = y
 start:
@@ -74,8 +94,8 @@ start:
 
 #Enter the coordinates of the goal position, (x,y) -> row = x, col = y
 goal:
-  - 2 #row
-  - 7 #col
+  - 9 #row
+  - 12 #col
 
 #enter heuristic of choice: octile or manhattan
 heuristic:

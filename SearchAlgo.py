@@ -98,6 +98,7 @@ class Astar:
     def pathFinder(self, start, goal, grid, movement, heu, heu_name):
         open_list = [] #Open List for Priority tracking
         overall_dict = {} #Overall dictionary for membership tracking
+        explored = []
         heapq.heapify(open_list)
         closed_list = []
  
@@ -110,7 +111,7 @@ class Astar:
         while True:
             if len(open_list) == 0:
                 return None
-                
+            
             
             
             else:
@@ -123,7 +124,7 @@ class Astar:
 
                 elif curr_g == best_known[0]:
                     closed_list.append(curr_node_coord)
-                    
+                    explored.append(curr_node_coord)
                     generator = self.neighbourGenerator(curr_node_coord, grid, heu_name)
                     
                     for neighbour in generator:
@@ -149,7 +150,7 @@ class Astar:
                             overall_dict[neighbour.coord] = [neighbour.g_val, parent]
                             heapq.heappush(open_list, (neighbour.f_val, neighbour.g_val, neighbour.coord))
                             if self.isGoal(neighbour.coord, goal.coord):
-                                return self.pathReconstruct(start.coord, neighbour.coord, overall_dict, grid)
+                                return self.pathReconstruct(start.coord, neighbour.coord, overall_dict, grid), explored
                             
                             continue
 

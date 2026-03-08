@@ -33,14 +33,12 @@ def loadGrid():
 def loadObstacles(grid):
   obstacle = ld.obstacles
   
-  while len(obstacle) != 0:
-    obs = obstacle[0]
-    obs1 = obstacle[1]
-    obstacle.pop(0)
-    obstacle.pop(0)
-    #assign the first two obstacle coords in the list and pop them from the list
-    #first two coords represent the start and end of the 'wall' obstacle
- 
+  for pair in range(0, len(obstacle), 2):
+    obs = obstacle[pair]
+    obs1 = obstacle[pair + 1]
+  #assign the first two obstacle coords in the list
+  #first two coords represent the start and end of the 'wall' obstacle
+
     if grid[obs[0]][obs[1]] != '#':
       grid[obs[0]][obs[1]] = '#'
       #if the current cell isn't an obstacle, make it one
@@ -78,11 +76,4 @@ def loadObstacles(grid):
         #the wall is goint *right* from the starting point
 
   return grid  
-
- 
-def printGrid(grid):
-  g = []
-  for row in grid:
-    print(row)
-
 

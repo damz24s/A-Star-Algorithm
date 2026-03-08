@@ -2,7 +2,7 @@ import pygame
 import yaml
 
 
-def display(obstacles):
+def visuals(obstacles, reconstructed, explored):
   pygame.init()
 
 
@@ -14,8 +14,6 @@ def display(obstacles):
   start = data['start']
   goal = data['goal']
   cellSize = data['cell_size']
-
-
 
 
   #Rows x Columns of the Grid and the size of the cells
@@ -46,8 +44,10 @@ def display(obstacles):
 
 
   #COLOURS
+  YELLOW = ((255, 215, 0))
   RED = ((255, 0, 0))
   GREEN = ((0, 255, 0))
+  BLUE = ((0, 0, 255))
   BLACK = ((0, 0, 0))
   GREY = ((50, 50, 50))
   WHITE = ((255, 255, 255))
@@ -58,8 +58,11 @@ def display(obstacles):
   screen_width = width
   screen_height = height
   screen = pygame.display.set_mode((screen_width, screen_height))
-  pygame.display.set_caption("GRID")
+  pygame.display.set_caption("A* Visualisation")
 
+
+  counter = 0
+  counter2 = 0
 
   running = True
   while running:
@@ -127,6 +130,21 @@ def display(obstacles):
             cell = grid[curr[0]][curr[1]] 
             pygame.draw.rect(screen, GREY, cell)
             #the wall is goint *right* from the starting point
+
+    
+    for i in range(1, counter, 1):
+      cell = grid[explored[i][0]][explored[i][1]]
+      pygame.draw.rect(screen, BLUE, cell)
+    if counter < len(explored):
+      counter += 1
+    
+    else: 
+      for i in range(1, counter2 - 1, 1):
+        cell = grid[reconstructed[i][0]][reconstructed[i][1]]
+        pygame.draw.rect(screen, YELLOW, cell)
+      if counter2 < len(reconstructed):
+        counter2 += 1
+
 
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
