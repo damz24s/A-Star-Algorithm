@@ -1,15 +1,15 @@
 # A* Pathfinding Algorithm (Python)
 
-A built-from-scratch implementation of the A* pathfinding algorithm, designed with a strong focus on algorithmic correctness, state management, and robustness against common implementation pitfalls. This project allows users to configure the grid, heuristic, and movement costs via a YAML configuration file without modifying the core code. A pygame-based visualiser is included to display the grid and animate the search process in real time.
+i built an implementation of the A* pathfinding algorithm from scratch, designed with a focus on state management and robustness. This project allows users to configure the grid, heuristic, and movement costs via a YAML configuration file without modifying the core code. I've extended the project by adding a pygame based visualiser to display the grid and animate the search process in real time.
 
 ---
 
 ## Features
 
 - Custom implementation of the A* search algorithm (no pathfinding libraries)
-- Coordinate-based state representation for consistent state comparison
+- Coordinate based state representation for consistent state comparison
 - Priority queue (heap) open list with lazy removal of outdated nodes
-- Global cost dictionary tracking best-known g-values per state
+- Global cost dictionary tracking best known g-values per state
 - Correct handling of node re-opening when a lower-cost path is found
 - Parent tracking for deterministic path reconstruction
 - Configurable heuristics and movement costs via `config.yaml`
@@ -65,7 +65,7 @@ python main.py
 ```
 
 The program will present a menu with the following options:
-1. **Path Finder** — Runs A* and prints the resulting path
+1. **Path Finder** — Runs A* and animates the search process
 2. **Display Grid** — Opens a pygame window showing the configured grid
 3. **Exit**
 
